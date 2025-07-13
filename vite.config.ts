@@ -5,7 +5,7 @@ import { nodePolyfills } from 'vite-plugin-node-polyfills'
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  base: '/offline_file_transfer/',
+  base: '/',
   build: {
     outDir: 'dist',
     assetsDir: 'assets',
@@ -13,6 +13,9 @@ export default defineConfig({
     rollupOptions: {
       output: {
         manualChunks: undefined,
+        entryFileNames: 'assets/[name].[hash].js',
+        chunkFileNames: 'assets/[name].[hash].js',
+        assetFileNames: 'assets/[name].[hash].[ext]'
       },
     },
   },
@@ -33,8 +36,8 @@ export default defineConfig({
         background_color: '#ffffff',
         display: 'standalone',
         orientation: 'portrait',
-        scope: '/offline_file_transfer/',
-        start_url: '/offline_file_transfer/',
+        scope: '/',
+        start_url: '/',
         icons: [
           {
             src: 'icon-192x192.png',
