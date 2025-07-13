@@ -1,0 +1,1 @@
+if('serviceWorker' in navigator) {window.addEventListener('load', () => {navigator.serviceWorker.register('/offline_file_transfer/sw.js', { scope: '/offline_file_transfer/' })})}
