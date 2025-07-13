@@ -25,12 +25,12 @@ jobs:
       - name: Detect package manager
         id: detect-package-manager
         run: |
-          if [ -f "${{ github.workspace }}/client/yarn.lock" ]; then
+          if [ -f "${{ github.workspace }}/yarn.lock" ]; then
             echo "manager=yarn" >> $GITHUB_OUTPUT
             echo "command=install" >> $GITHUB_OUTPUT
             echo "runner=yarn" >> $GITHUB_OUTPUT
             exit 0
-          elif [ -f "${{ github.workspace }}/client/package.json" ]; then
+          elif [ -f "${{ github.workspace }}/package.json" ]; then
             echo "manager=npm" >> $GITHUB_OUTPUT
             echo "command=ci" >> $GITHUB_OUTPUT
             echo "runner=npx --no-install" >> $GITHUB_OUTPUT
@@ -45,7 +45,6 @@ jobs:
         with:
           node-version: "20"
           cache: ${{ steps.detect-package-manager.outputs.manager }}
-          cache-dependency-path: "client/package-lock.json"
 
       - name: Setup Pages
         uses: actions/configure-pages@v4
@@ -54,30 +53,27 @@ jobs:
         uses: actions/cache@v3
         with:
           path: |
-            client/node_modules
-            client/dist
-          key: ${{ runner.os }}-vite-${{ hashFiles('client/package-lock.json', 'client/yarn.lock') }}-${{ hashFiles('client/src/**.[jt]s', 'client/src/**.[jt]sx') }}
+            dist
+          key: ${{ runner.os }}-vite-${{ hashFiles('**/package-lock.json', '**/yarn.lock') }}-${{ hashFiles('**.[jt]s', '**.[jt]sx') }}
           restore-keys: |
-            ${{ runner.os }}-vite-${{ hashFiles('client/package-lock.json', 'client/yarn.lock') }}-
+            ${{ runner.os }}-vite-${{ hashFiles('**/package-lock.json', '**/yarn.lock') }}-
 
       - name: Install dependencies
-        working-directory: ./client
         run: ${{ steps.detect-package-manager.outputs.manager }} ${{ steps.detect-package-manager.outputs.command }}
 
       - name: Build with Vite
-        working-directory: ./client
         run: ${{ steps.detect-package-manager.outputs.runner }} run build
 
       - name: Add CNAME file
-        run: echo 'fileshare.bitsandbots.in' > ./client/dist/CNAME
+        run: echo 'fileshare.bitsandbots.in' > ./dist/CNAME
 
       - name: Add .nojekyll file
-        run: touch ./client/dist/.nojekyll
+        run: touch ./dist/.nojekyll
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: ./client/dist
+          path: ./dist
 
   deploy:
     environment:
